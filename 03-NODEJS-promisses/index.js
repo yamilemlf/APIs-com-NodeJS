@@ -4,6 +4,9 @@
 2 Obter o endereco do usuario pelo id
 */
 
+const util = require('util')
+const obterEnderecoAsync = util.promisify(obterEndereco)
+
 function obterUsuario () {
     //quando der algum problema -> reject(ERRO)
     //quando sucesso => RESOLVE
@@ -42,15 +45,39 @@ function obterEndereco (idUsuario, callback) {
 
 const usuarioPromise = obterUsuario()
 //para manipular sucesso: .then
-//para manipular erros, .catch
+//para manipular erros: .catch
 usuarioPromise
     .then(function (resultado) {
         return obterTelefone(resultado.id)
+        .then(function resolverTelefone(result){
+            return {
+                usuario: {
+                    nome: resultado.nome,
+                    id: resultado.id
+                },
+                telefone: result
+            }
+        })
     })
+    .then(function (resultado) {
+        const endereco = obterEnderecoAsync(resultado.usuario.id)
+        return endereco.then(function resolverEndereco (result) {
+            return {
+                usuario: resultado.usuario,
+                telefone: resultado.telefone,
+                endereco: result
+            }
+        })
+    })
+
     .then(function(resultado){
-        console.log('RESULTADO ', resultado)
+        console.log(`
+            Nome: ${resultado.usuario.nome}
+            Endereço: ${resultado.endereco.rua}, ${resultado.endereco.numero}
+            Telefone: (${resultado.telefone.ddd}) ${resultado.telefone.telefone}
+            `)
     })
     .catch(function(error){
-        console.log('DEU RUIM ', error)
+        console.error('DEU RUIM ', error)
     })
 
