@@ -43,7 +43,7 @@ function obterEndereco (idUsuario, callback) {
     }, 2000)
 }
 
-//1º passo: add palavra async na função e automaticaente ela retornará uma promise
+//1º passo: add palavra async na função e automaticamente ela retornará uma promise
 
 main()
 
@@ -53,7 +53,7 @@ async function main () {
         const usuario = await obterUsuario()
         // const telefone = await obterTelefone(usuario.id)
         // const endereco = await obterEnderecoAsync(usuario.id)
-
+        // dai já imprime o resultado como gostaria. Para deixar mais performático, refatoramos para o código que está agora
         const resultado = await Promise.all([
             obterTelefone(usuario.id),
             obterEnderecoAsync(usuario.id)
@@ -72,5 +72,5 @@ async function main () {
     catch (error) {
         console.error('DEU RUIM ', error)
     }
-}
+} 
 
